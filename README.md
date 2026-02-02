@@ -201,31 +201,100 @@ Not found (404):
 }
 ```
 
-## Testing The API 
+Here’s a **clean, professional rewrite** of that README section that **prevents the PowerShell double-quotes issue** and won’t annoy testers.
 
-### Using curl
+You can copy this **as-is**.
 
-Create category:
+---
+
+## Testing the API
+
+You can test the API **without a frontend** using either **PowerShell** (Windows) or **curl** (Linux/macOS).
+
+---
+
+### Option 1: Windows (PowerShell – recommended)
+
+PowerShell aliases `curl` to `Invoke-WebRequest`, which can cause quoting issues.
+Use **Invoke-RestMethod** instead.
+
+#### Create category
+
+```powershell
+Invoke-RestMethod -Method POST `
+  -Uri "http://127.0.0.1:5000/api/categories" `
+  -ContentType "application/json" `
+  -Body (@{ name = "Tech" } | ConvertTo-Json)
+```
+
+#### Create product
+
+```powershell
+Invoke-RestMethod -Method POST `
+  -Uri "http://127.0.0.1:5000/api/products" `
+  -ContentType "application/json" `
+  -Body (@{ name="Laptop"; price=15000; category_name="Tech" } | ConvertTo-Json)
+```
+
+#### List products
+
+```powershell
+Invoke-RestMethod "http://127.0.0.1:5000/api/products"
+```
+
+---
+
+### Option 2: Windows (real curl)
+
+If you prefer `curl`, make sure to use **`curl.exe`** explicitly:
+
+#### Create category
+
+```powershell
+curl.exe -X POST "http://127.0.0.1:5000/api/categories" ^
+  -H "Content-Type: application/json" ^
+  --data-raw "{\"name\":\"Tech\"}"
+```
+
+#### Create product
+
+```powershell
+curl.exe -X POST "http://127.0.0.1:5000/api/products" ^
+  -H "Content-Type: application/json" ^
+  --data-raw "{\"name\":\"Laptop\",\"price\":15000,\"category_name\":\"Tech\"}"
+```
+
+#### List products
+
+```powershell
+curl.exe "http://127.0.0.1:5000/api/products"
+```
+
+---
+
+### Option 3: Linux / macOS (standard curl)
 
 ```bash
 curl -X POST http://127.0.0.1:5000/api/categories \
   -H "Content-Type: application/json" \
   -d '{"name":"Tech"}'
-```
 
-Create product:
-
-```bash
 curl -X POST http://127.0.0.1:5000/api/products \
   -H "Content-Type: application/json" \
   -d '{"name":"Laptop","price":15000,"category_name":"Tech"}'
-```
 
-List products:
-
-```bash
 curl http://127.0.0.1:5000/api/products
 ```
+
+---
+
+### Notes
+
+* The server must be running (`python app.py`) before testing.
+* PowerShell users should **prefer Option 1** to avoid JSON escaping issues.
+* All endpoints return JSON responses with appropriate HTTP status codes.
+
+---
 
 ## Status Codes Used
 
